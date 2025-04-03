@@ -1,6 +1,5 @@
 #include <string>
 #include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/fmt/ostr.h"
 
 namespace aratamq {
@@ -10,14 +9,14 @@ namespace aratamq {
             std::shared_ptr<spdlog::logger> logger;
             static Logger* instance;
 
-            Logger(std::string, std::string);
+            Logger(std::string, std::string, std::string, bool);
 
         public:
             Logger(const Logger&) = delete;
             Logger& operator=(const Logger&) = delete;
 
             static Logger& Instance();
-            static void Initialize(const std::string&, const std::string&);
+            static void Initialize(const std::string&, const std::string&, const std::string&, const bool&);
             static void cleanup();
 
             template<typename... Args>
