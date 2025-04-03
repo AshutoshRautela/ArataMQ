@@ -1,0 +1,50 @@
+# Directories
+build/
+.vscode/
+files/
+
+.DS_Store
+
+# Object files
+.obj/
+.lib/
+.exp/
+.lib.exp/
+.lib.exp.lib/
+.lib.exp.lib.lib/
+.lib.exp.lib.lib.lib/
+
+# Executables
+.exe/
+.out/
+.bin/
+
+# Libraries
+.so/
+.dylib/
+.a/
+.lib/
+
+# Logs
+*.log
+*.log.*
+*.log.*.*
+*.log.*.*.*
+*.log.*.*.*.*
+*.log.*.*.*.*.*
+
+# Configuration files
+*.cfg
+*.cfg.*
+*.cfg.*.*
+*.cfg.*.*.*
+*.cfg.*.*.*.*
+*.cfg.*.*.*.*.*
+
+# Temporary files
+*.tmp
+*.tmp.*
+*.tmp.*.*
+*.tmp.*.*.*
+*.tmp.*.*.*.*
+*.tmp.*.*.*.*.*
