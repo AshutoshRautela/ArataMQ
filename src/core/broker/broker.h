@@ -12,10 +12,10 @@ namespace armq {
             
             void initQueue();
 
+        public:
             void Produce(const armq::Message&);
             void Consume(std::string);
-
-        public:
+            
             Broker(std::string, std::string);
             ~Broker();
     };

@@ -6,6 +6,7 @@
 #include "core/broker/broker.h"
 #include "core/message/message.h"
 #include "utils/logger.h"
+#include "utils/utils.h"
 
 armq::Message PrepareSampleMessage() {
     armq::Metadata metadata;
@@ -19,9 +20,11 @@ armq::Message PrepareSampleMessage() {
     headers.contentType = "application/json";
     headers.contentEncoding = "utf-8";
     headers.customHeaders = {}; 
+
+    nlohmann::json payload;
+    payload["message1"] = "Hey!";
+    payload["timestamp"] = armq::GetCurrentTimestamp();
     
-    nlohmann::json payload = nlohmann::json::object();
-    payload["data"] = {{"message", "Hey!"}};
     return armq::Message(std::move(metadata), std::move(headers), std::move(payload));
 }
 
@@ -34,7 +37,7 @@ int main()
         aratamq::Logger::Instance().Info("Starting ArataMQ");
 
         armq::Broker broker(config.queueFileDir, config.queueFile);
-
+        broker.Produce(PrepareSampleMessage());
 
         aratamq::Logger::Instance().Info("Shutting down ArataMQ");
         aratamq::Logger::cleanup();

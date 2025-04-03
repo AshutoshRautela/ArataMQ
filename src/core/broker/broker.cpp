@@ -20,8 +20,7 @@ namespace armq {
             aratamq::Logger::Instance().Error("Failed to open queue file");
             return;
         }
-
-        queueFileStream << "Initializing queue over Broker" << std::endl;
+        
         queueFileStream.close();
     }
 
