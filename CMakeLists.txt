@@ -1,7 +1,10 @@
 include("cmake/vcpkg.cmake")
 
 cmake_minimum_required(VERSION 3.31)
-project(ArataMQ)
+project(ArataMQ VERSION 0.1.0)
+
+# Enable tests
+enable_testing()
 
 # Add src directory to include path
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -34,3 +37,6 @@ find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME}_producer PRIVATE spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME}_consumer PRIVATE spdlog::spdlog)
+
+# Include gtest.cmake
+include("cmake/gtest.cmake")

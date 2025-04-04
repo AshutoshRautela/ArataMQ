@@ -3,7 +3,7 @@
 
 #include <queue>
 #include <string>
-#include "../message/message.h"
+#include "core/message/message.h"
 namespace armq
 {
     class Queue

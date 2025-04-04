@@ -1,5 +1,5 @@
 #include "topic_exchange.h"
-#include "../utils/utils.h"
+#include "utils/utils.h"
 
 namespace armq
 {

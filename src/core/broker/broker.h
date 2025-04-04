@@ -2,7 +2,7 @@
 #define AR_BROKER_H
 
 #include <string>
-#include "../message/message.h"
+#include "core/message/message.h"
 
 namespace armq {
     class Broker {
