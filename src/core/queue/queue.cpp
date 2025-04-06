@@ -19,6 +19,6 @@ namespace armq
         }
         Message message = m_messages.front();
         m_messages.pop();
-        return message;
+        return std::move(message);
     }
 }

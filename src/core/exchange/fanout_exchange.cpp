@@ -11,6 +11,8 @@ namespace armq
 
     void FanoutExchange::UnbindQueue(std::shared_ptr<Queue> queue)
     {
+        if (!this->m_queues.count(queue))
+            throw std::runtime_error("Queue not bound to exchange");
         this->m_queues.erase(queue);
     }
 
