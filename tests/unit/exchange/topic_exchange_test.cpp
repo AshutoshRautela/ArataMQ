@@ -17,7 +17,7 @@ namespace armq {
                 // TearDown is called after each test
                 // Cleans up the TopicExchange instance
                 void TearDown() override {
-
+                    _topicExchange.reset();
                 }
 
                 std::shared_ptr<TopicExchange> _topicExchange;

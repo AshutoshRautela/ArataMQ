@@ -23,4 +23,11 @@ namespace armq
             throw std::runtime_error("No queue bound to routing key '" + routingKey + "' in exchange '" + m_name + "'");
         this->m_routingTable[routingKey]->Enqueue(message);
     }
+
+    std::shared_ptr<Queue> DirectExchange::GetQueue(const std::string &routingKey)
+    {
+        if (this->m_routingTable.find(routingKey) == this->m_routingTable.end())
+            throw std::runtime_error("No queue bound to routing key '" + routingKey + "' in exchange '" + m_name + "'");
+        return this->m_routingTable[routingKey];
+    }
 }
