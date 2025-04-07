@@ -45,49 +45,55 @@ namespace armq
         return true;
     }
 
-    void TopicExchange::BindQueue(const std::string &pattern, std::shared_ptr<Queue> queue)
+    void TopicExchange::BindQueue(std::shared_ptr<Queue> queue, const std::optional<std::string> &pattern)
     {
+        if (!pattern.has_value())
+            throw std::invalid_argument("Routing pattern is required");
         try
         {
-            ValidateRoutingPattern(pattern);
-            this->m_bindingTable[pattern].insert(queue);
+            ValidateRoutingPattern(pattern.value());
+            this->m_bindingTable[pattern.value()].insert(queue);
         }
         catch (const std::invalid_argument &e)
         {
-            throw std::invalid_argument("Invalid routing pattern: " + pattern + ". " + e.what());
+            throw std::invalid_argument("Invalid routing pattern: " + pattern.value() + ". " + e.what());
         }
     }
 
-    void TopicExchange::UnbindQueue(const std::string &pattern, std::shared_ptr<Queue> queue)
+    void TopicExchange::UnbindQueue(std::shared_ptr<Queue> queue, const std::optional<std::string> &pattern)
     {
+        if (!pattern.has_value())
+            throw std::invalid_argument("Routing pattern is required");
         try
         {
-            ValidateRoutingPattern(pattern);
-            if (this->m_bindingTable.count(pattern) == 0)
-                throw std::invalid_argument("No binding found for pattern: " + pattern);
+            ValidateRoutingPattern(pattern.value());
+            if (this->m_bindingTable.count(pattern.value()) == 0)
+                throw std::invalid_argument("No binding found for pattern: " + pattern.value());
 
-            if (this->m_bindingTable[pattern].count(queue) == 0)
-                throw std::invalid_argument("Queue not found in binding for pattern: " + pattern);
+            if (this->m_bindingTable[pattern.value()].count(queue) == 0)
+                throw std::invalid_argument("Queue not found in binding for pattern: " + pattern.value());
         
-            this->m_bindingTable[pattern].erase(queue);
-            if (this->m_bindingTable[pattern].empty())
-                this->m_bindingTable.erase(pattern);
+            this->m_bindingTable[pattern.value()].erase(queue);
+            if (this->m_bindingTable[pattern.value()].empty())
+                this->m_bindingTable.erase(pattern.value());
         }
         catch (const std::invalid_argument &e)
         {
-            throw std::invalid_argument("Invalid routing pattern: " + pattern + ". " + e.what());
+            throw std::invalid_argument("Invalid routing pattern: " + pattern.value() + ". " + e.what());
         }
     }
 
-    void TopicExchange::RouteMessage(const std::string &routingKey, const Message &message)
+    void TopicExchange::RouteMessage(const Message &message, const std::optional<std::string> &routingKey)
     {
+        if (!routingKey.has_value())
+            throw std::invalid_argument("Routing key is required");
         try
         {
             bool messageRouted = false;
-            ValidateRoutingKey(routingKey);
+            ValidateRoutingKey(routingKey.value());
             for (const auto &[pattern, queues] : this->m_bindingTable)
             {
-                if (this->TryMatchPattern(pattern, routingKey))
+                if (this->TryMatchPattern(pattern, routingKey.value()))
                 {
                     messageRouted = true;
                     for (const auto &queue : queues)
@@ -99,7 +105,7 @@ namespace armq
 
             if (!messageRouted)
             {
-                throw std::invalid_argument("No matching pattern found for routing key: " + routingKey);
+                throw std::invalid_argument("No matching pattern found for routing key: " + routingKey.value());
             }
         }
         catch (const std::invalid_argument &e)
@@ -123,7 +129,7 @@ namespace armq
         }
     }
 
-    std::unordered_set<std::shared_ptr<Queue>> TopicExchange::GetQueue(const std::string &pattern)
+    std::unordered_set<std::shared_ptr<Queue>> TopicExchange::GetQueues(const std::string &pattern)
     {
         try
         {

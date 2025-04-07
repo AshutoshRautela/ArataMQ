@@ -79,69 +79,69 @@ namespace armq {
         };
 
         TEST_F(DirectExchangeTest, ValidateName) {
-            EXPECT_EQ(_directExchange->getName(), "test_direct_exchange");
+            EXPECT_EQ(_directExchange->GetName(), "test_direct_exchange");
         }
 
         // Comment out these tests until the DirectExchange methods are implemented
         
         TEST_F(DirectExchangeTest, BindQueue) {
-            _directExchange->BindQueue("routing_key_1", _testQueue1);
+            _directExchange->BindQueue(_testQueue1, "routing_key_1");
             EXPECT_EQ(_directExchange->GetQueue("routing_key_1"), _testQueue1);
             EXPECT_EQ(_directExchange->GetRoutingTableSize(), 1);
 
-            _directExchange->BindQueue("routing_key_2", _testQueue2);
+            _directExchange->BindQueue(_testQueue2, "routing_key_2");
             EXPECT_EQ(_directExchange->GetQueue("routing_key_2"), _testQueue2);
             EXPECT_EQ(_directExchange->GetRoutingTableSize(), 2);
 
-            _directExchange->BindQueue("routing_key_3", _testQueue3);
+            _directExchange->BindQueue(_testQueue3, "routing_key_3");
             EXPECT_EQ(_directExchange->GetQueue("routing_key_3"), _testQueue3);
             EXPECT_EQ(_directExchange->GetRoutingTableSize(), 3);
 
-            _directExchange->BindQueue("routing_key_4", _testQueue4);
+            _directExchange->BindQueue(_testQueue4, "routing_key_4");
             EXPECT_EQ(_directExchange->GetQueue("routing_key_4"), _testQueue4);
             EXPECT_EQ(_directExchange->GetRoutingTableSize(), 4);
         }
 
         TEST_F(DirectExchangeTest, UnbindQueue) {
-            _directExchange->BindQueue("routing_key_1", _testQueue1);
-            _directExchange->BindQueue("routing_key_2", _testQueue2);
-            _directExchange->BindQueue("routing_key_3", _testQueue3);
-            _directExchange->BindQueue("routing_key_4", _testQueue4);
+            _directExchange->BindQueue(_testQueue1, "routing_key_1");
+            _directExchange->BindQueue(_testQueue2, "routing_key_2");
+            _directExchange->BindQueue(_testQueue3, "routing_key_3");
+            _directExchange->BindQueue(_testQueue4, "routing_key_4");
             EXPECT_EQ(_directExchange->GetRoutingTableSize(), 4);
 
             EXPECT_EQ(_directExchange->GetQueue("routing_key_1"), _testQueue1);
-            _directExchange->UnbindQueue("routing_key_1", _testQueue1);
+            _directExchange->UnbindQueue(_testQueue1, "routing_key_1");
             EXPECT_THROW(_directExchange->GetQueue("routing_key_1"), std::runtime_error);
             EXPECT_EQ(_directExchange->GetRoutingTableSize(), 3);
 
             EXPECT_EQ(_directExchange->GetQueue("routing_key_2"), _testQueue2);
-            _directExchange->UnbindQueue("routing_key_2", _testQueue2);
+            _directExchange->UnbindQueue(_testQueue2, "routing_key_2");
             EXPECT_THROW(_directExchange->GetQueue("routing_key_2"), std::runtime_error);
             EXPECT_EQ(_directExchange->GetRoutingTableSize(), 2);
 
             EXPECT_EQ(_directExchange->GetQueue("routing_key_3"), _testQueue3);
-            _directExchange->UnbindQueue("routing_key_3", _testQueue3);
+            _directExchange->UnbindQueue(_testQueue3, "routing_key_3");
             EXPECT_THROW(_directExchange->GetQueue("routing_key_3"), std::runtime_error);
             EXPECT_EQ(_directExchange->GetRoutingTableSize(), 1);
 
             EXPECT_EQ(_directExchange->GetQueue("routing_key_4"), _testQueue4);
-            _directExchange->UnbindQueue("routing_key_4", _testQueue4);
+            _directExchange->UnbindQueue(_testQueue4, "routing_key_4");
             EXPECT_THROW(_directExchange->GetQueue("routing_key_4"), std::runtime_error);
             EXPECT_EQ(_directExchange->GetRoutingTableSize(), 0);
         }
 
         TEST_F(DirectExchangeTest, RouteMessage) {
-            _directExchange->BindQueue("routing_key_1", _testQueue1);
-            _directExchange->BindQueue("routing_key_2", _testQueue2);
+            _directExchange->BindQueue(_testQueue1, "routing_key_1");
+            _directExchange->BindQueue(_testQueue2, "routing_key_2");
 
             EXPECT_EQ(_directExchange->GetQueue("routing_key_1"), _testQueue1);
-            _directExchange->RouteMessage("routing_key_1", _testMessage1);
+            _directExchange->RouteMessage(_testMessage1, "routing_key_1");
             EXPECT_EQ(_testQueue1->Size(), 1);
             EXPECT_EQ(_testQueue1->Dequeue(), _testMessage1);
 
             EXPECT_EQ(_directExchange->GetQueue("routing_key_2"), _testQueue2);
-            _directExchange->RouteMessage("routing_key_2", _testMessage1);
-            _directExchange->RouteMessage("routing_key_2", _testMessage2);
+            _directExchange->RouteMessage(_testMessage1, "routing_key_2");
+            _directExchange->RouteMessage(_testMessage2, "routing_key_2");
             EXPECT_EQ(_testQueue2->Size(), 2);
             EXPECT_EQ(_testQueue2->Dequeue(), _testMessage1);
             EXPECT_EQ(_testQueue2->Size(), 1);

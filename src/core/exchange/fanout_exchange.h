@@ -14,9 +14,9 @@ namespace armq
     public:
         FanoutExchange(const std::string &name);
 
-        void BindQueue(std::shared_ptr<Queue> queue);
-        void UnbindQueue(std::shared_ptr<Queue> queue);
-        void RouteMessage(const Message &message);
+        void BindQueue(std::shared_ptr<Queue> queue, const std::optional<std::string> &bindingKey = std::nullopt) override;
+        void UnbindQueue(std::shared_ptr<Queue> queue, const std::optional<std::string> &bindingKey = std::nullopt) override;
+        void RouteMessage(const Message &message, const std::optional<std::string> &routingKey = std::nullopt) override;
         
         inline size_t GetQueueCount() const { return m_queues.size(); }
     };

@@ -75,7 +75,7 @@ namespace armq {
         };
 
         TEST_F(TopicExchangeTest, ValidateName) {
-            EXPECT_EQ(_topicExchange->getName(), "test_topic_exchange");
+            EXPECT_EQ(_topicExchange->GetName(), "test_topic_exchange");
         }
 
         TEST_F(TopicExchangeTest, TryMatchPattern) {
@@ -90,64 +90,64 @@ namespace armq {
         } 
 
         TEST_F(TopicExchangeTest, BindQueue) {
-            _topicExchange->BindQueue("test.*", _testQueue1);
-            _topicExchange->BindQueue("test.1", _testQueue2);
+            _topicExchange->BindQueue(_testQueue1, "test.*");
+            _topicExchange->BindQueue(_testQueue2, "test.1");
             
-            EXPECT_EQ(_topicExchange->GetQueue("test.*").count(_testQueue1), true);
+            EXPECT_EQ(_topicExchange->GetQueues("test.*").count(_testQueue1), true);
             EXPECT_EQ(_topicExchange->GetQueueSize("test.1"), 1);
             EXPECT_EQ(_topicExchange->GetQueueSize("test.*"), 1);
 
-            _topicExchange->BindQueue("test.*", _testQueue2);
-            EXPECT_EQ(_topicExchange->GetQueue("test.*").count(_testQueue2), true);
+            _topicExchange->BindQueue(_testQueue2, "test.*");
+            EXPECT_EQ(_topicExchange->GetQueues("test.*").count(_testQueue2), true);
             EXPECT_EQ(_topicExchange->GetQueueSize("test.*"), 2);
 
-            _topicExchange->BindQueue("test.1", _testQueue3);
-            EXPECT_EQ(_topicExchange->GetQueue("test.1").count(_testQueue3), true);
+            _topicExchange->BindQueue(_testQueue3, "test.1");
+            EXPECT_EQ(_topicExchange->GetQueues("test.1").count(_testQueue3), true);
             EXPECT_EQ(_topicExchange->GetQueueSize("test.1"), 2);
         }
 
         TEST_F(TopicExchangeTest, UnbindQueue) {
-            _topicExchange->BindQueue("test.*", _testQueue1);
+            _topicExchange->BindQueue(_testQueue1, "test.*");
             EXPECT_EQ(_topicExchange->GetQueueSize("test.*"), 1);
-            _topicExchange->BindQueue("test.1", _testQueue2);
+            _topicExchange->BindQueue(_testQueue2, "test.1");
             EXPECT_EQ(_topicExchange->GetQueueSize("test.1"), 1);
 
-            _topicExchange->BindQueue("test.*", _testQueue2);
+            _topicExchange->BindQueue(_testQueue2, "test.*");
             EXPECT_EQ(_topicExchange->GetQueueSize("test.*"), 2);
 
-            _topicExchange->UnbindQueue("test.*", _testQueue1);
-            EXPECT_EQ(_topicExchange->GetQueue("test.*").count(_testQueue1), false);
+            _topicExchange->UnbindQueue(_testQueue1, "test.*");
+            EXPECT_EQ(_topicExchange->GetQueues("test.*").count(_testQueue1), false);
             EXPECT_EQ(_topicExchange->GetQueueSize("test.*"), 1);
 
-            _topicExchange->UnbindQueue("test.1", _testQueue2);
-            EXPECT_THROW(_topicExchange->GetQueue("test.1"), std::invalid_argument);
+            _topicExchange->UnbindQueue(_testQueue2, "test.1");
+            EXPECT_THROW(_topicExchange->GetQueues("test.1"), std::invalid_argument);
             EXPECT_THROW(_topicExchange->GetQueueSize("test.1"), std::invalid_argument);
             
-            _topicExchange->UnbindQueue("test.*", _testQueue2);
-            EXPECT_THROW(_topicExchange->GetQueue("test.*"), std::invalid_argument);
+            _topicExchange->UnbindQueue(_testQueue2, "test.*");
+            EXPECT_THROW(_topicExchange->GetQueues("test.*"), std::invalid_argument);
             EXPECT_THROW(_topicExchange->GetQueueSize("test.*"), std::invalid_argument);
 
-            EXPECT_THROW(_topicExchange->UnbindQueue("test.*", _testQueue2), std::invalid_argument);
-            EXPECT_THROW(_topicExchange->UnbindQueue("test.1", _testQueue1), std::invalid_argument);
+            EXPECT_THROW(_topicExchange->UnbindQueue(_testQueue2, "test.*"), std::invalid_argument);
+            EXPECT_THROW(_topicExchange->UnbindQueue(_testQueue1, "test.1"), std::invalid_argument);
         }
         
         TEST_F(TopicExchangeTest, RouteMessage) {
-            _topicExchange->BindQueue("test.*", _testQueue1);
-            _topicExchange->BindQueue("test.1", _testQueue2);
-            _topicExchange->BindQueue("test.#", _testQueue3);
+            _topicExchange->BindQueue(_testQueue1, "test.*");
+            _topicExchange->BindQueue(_testQueue2, "test.1");
+            _topicExchange->BindQueue(_testQueue3, "test.#");
 
-            _topicExchange->RouteMessage("test.1", _testMessage1);
+            _topicExchange->RouteMessage(_testMessage1, "test.1");
 
             EXPECT_EQ(_testQueue1->Size(), 1);
             EXPECT_EQ(_testQueue2->Size(), 1);
             EXPECT_EQ(_testQueue3->Size(), 1);
 
-            _topicExchange->RouteMessage("test.2", _testMessage2);
+            _topicExchange->RouteMessage(_testMessage2, "test.2");
             EXPECT_EQ(_testQueue1->Size(), 2);
             EXPECT_EQ(_testQueue2->Size(), 1);
             EXPECT_EQ(_testQueue3->Size(), 2);
 
-            _topicExchange->RouteMessage("test.3.1", _testMessage2);
+            _topicExchange->RouteMessage(_testMessage2, "test.3.1");
             EXPECT_EQ(_testQueue1->Size(), 2);
             EXPECT_EQ(_testQueue2->Size(), 1);
             EXPECT_EQ(_testQueue3->Size(), 3);

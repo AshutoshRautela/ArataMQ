@@ -17,11 +17,11 @@ namespace armq
         if (routingKey.empty())
             throw std::invalid_argument("Routing Key cannot be empty");
 
-        if (routingKey.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.") != std::string::npos)
-            throw std::invalid_argument("Invalid characters in pattern");
+        if (routingKey.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-") != std::string::npos)
+            throw std::invalid_argument("Invalid characters in routing key");
 
         if (routingKey.find("*") != std::string::npos || routingKey.find("#") != std::string::npos || routingKey.find("..") != std::string::npos)
-            throw std::invalid_argument("Invalid characters in pattern");
+            throw std::invalid_argument("Wildcards (*,#) are not allowed in routing keys");
     }
 
     void ValidateRoutingPattern(const std::string &pattern)

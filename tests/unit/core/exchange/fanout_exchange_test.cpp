@@ -73,7 +73,7 @@ namespace armq {
         };
 
         TEST_F(FanoutExchangeTest, ValidateName) {
-            EXPECT_EQ(_fanoutExchange->getName(), "test_fanout_exchange");
+            EXPECT_EQ(_fanoutExchange->GetName(), "test_fanout_exchange");
         }
 
         TEST_F(FanoutExchangeTest, BindQueue) {

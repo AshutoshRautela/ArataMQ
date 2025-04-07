@@ -24,8 +24,12 @@ namespace armq
         IExchange(const std::string &name, ExchangeType type): m_name(name), m_type(type) {}
         virtual ~IExchange() = default;
 
-        const inline std::string &getName() const { return m_name; }
-        const inline ExchangeType getType() const { return m_type; }
+        virtual void BindQueue(std::shared_ptr<Queue> queue, const std::optional<std::string> &bindingKey) = 0;
+        virtual void UnbindQueue(std::shared_ptr<Queue> queue, const std::optional<std::string> &bindingKey) = 0;
+        virtual void RouteMessage(const Message &message, const std::optional<std::string> &routingKey) = 0;
+
+        const inline std::string &GetName() const { return m_name; }
+        const inline ExchangeType GetType() const { return m_type; }
     };
 }
 
