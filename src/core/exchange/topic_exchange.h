@@ -19,6 +19,9 @@ namespace armq
         void BindQueue(const std::string &pattern, std::shared_ptr<Queue> queue);
         void UnbindQueue(const std::string &pattern, std::shared_ptr<Queue> queue);
         void RouteMessage(const std::string &routingKey, const Message &message);
+
+        std::unordered_set<std::shared_ptr<Queue>> GetQueue(const std::string &pattern);
+        size_t GetQueueSize(const std::string &pattern);
     };
 }
 #endif

@@ -7,7 +7,48 @@ namespace armq {
     namespace test {
         class DirectExchangeTest : public ::testing::Test {
             protected:
-                DirectExchangeTest() {}
+                DirectExchangeTest(): _testMessage1(
+                        Metadata{
+                            "testMessageId_1",
+                            "2021-01-01 12:00:00",
+                            "testSource",
+                            "testDestination",
+                            "testType"
+                        },
+                        Headers{
+                            "application/json",
+                            "utf-8",
+                            {
+                                {"headerKey1", "headerValue1"},
+                                {"headerKey2", "headerValue2"}
+                            }
+                        },
+                        nlohmann::json({
+                            {"key1", "value1"},
+                            {"key2", "value2"}
+                        })
+                    ), _testMessage2(
+                        Metadata{
+                            "testMessageId_2",
+                            "2021-01-01 12:00:00",
+                            "testSource",
+                            "testDestination",
+                            "testType"
+                        },
+                        Headers{
+                            "application/json",
+                            "utf-8",
+                            {
+                                {"headerKey1", "headerValue1"},
+                                {"headerKey2", "headerValue2"}
+                            }
+                        },
+                        nlohmann::json({
+                            {"key1", "value1"},
+                            {"key2", "value2"}
+                        })
+                    )
+                 {}
 
                 // SetUp is called before each test
                 void SetUp() override {
@@ -32,6 +73,9 @@ namespace armq {
                 std::shared_ptr<armq::Queue> _testQueue2;
                 std::shared_ptr<armq::Queue> _testQueue3;
                 std::shared_ptr<armq::Queue> _testQueue4;
+
+                Message _testMessage1;
+                Message _testMessage2;
         };
 
         TEST_F(DirectExchangeTest, ValidateName) {
@@ -84,6 +128,24 @@ namespace armq {
             _directExchange->UnbindQueue("routing_key_4", _testQueue4);
             EXPECT_THROW(_directExchange->GetQueue("routing_key_4"), std::runtime_error);
             EXPECT_EQ(_directExchange->GetRoutingTableSize(), 0);
+        }
+
+        TEST_F(DirectExchangeTest, RouteMessage) {
+            _directExchange->BindQueue("routing_key_1", _testQueue1);
+            _directExchange->BindQueue("routing_key_2", _testQueue2);
+
+            EXPECT_EQ(_directExchange->GetQueue("routing_key_1"), _testQueue1);
+            _directExchange->RouteMessage("routing_key_1", _testMessage1);
+            EXPECT_EQ(_testQueue1->Size(), 1);
+            EXPECT_EQ(_testQueue1->Dequeue(), _testMessage1);
+
+            EXPECT_EQ(_directExchange->GetQueue("routing_key_2"), _testQueue2);
+            _directExchange->RouteMessage("routing_key_2", _testMessage1);
+            _directExchange->RouteMessage("routing_key_2", _testMessage2);
+            EXPECT_EQ(_testQueue2->Size(), 2);
+            EXPECT_EQ(_testQueue2->Dequeue(), _testMessage1);
+            EXPECT_EQ(_testQueue2->Size(), 1);
+            EXPECT_EQ(_testQueue2->Dequeue(), _testMessage2);
         }
     }  
 }

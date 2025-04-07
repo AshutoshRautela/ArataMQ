@@ -63,7 +63,15 @@ namespace armq
         try
         {
             ValidateRoutingPattern(pattern);
+            if (this->m_bindingTable.count(pattern) == 0)
+                throw std::invalid_argument("No binding found for pattern: " + pattern);
+
+            if (this->m_bindingTable[pattern].count(queue) == 0)
+                throw std::invalid_argument("Queue not found in binding for pattern: " + pattern);
+        
             this->m_bindingTable[pattern].erase(queue);
+            if (this->m_bindingTable[pattern].empty())
+                this->m_bindingTable.erase(pattern);
         }
         catch (const std::invalid_argument &e)
         {
@@ -76,7 +84,7 @@ namespace armq
         try
         {
             bool messageRouted = false;
-
+            ValidateRoutingKey(routingKey);
             for (const auto &[pattern, queues] : this->m_bindingTable)
             {
                 if (this->TryMatchPattern(pattern, routingKey))
@@ -97,6 +105,36 @@ namespace armq
         catch (const std::invalid_argument &e)
         {
             throw std::invalid_argument("Error routing message: " + std::string(e.what()));
+        }
+    }
+
+    size_t TopicExchange::GetQueueSize(const std::string &pattern)
+    {
+        try
+        {
+            if (this->m_bindingTable.find(pattern) == this->m_bindingTable.end())
+                throw std::invalid_argument("No binding found for pattern: " + pattern);
+            ValidateRoutingPattern(pattern);
+            return this->m_bindingTable[pattern].size();
+        }
+        catch (const std::invalid_argument &e)
+        {
+            throw std::invalid_argument("Invalid routing pattern: " + pattern + ". " + e.what());
+        }
+    }
+
+    std::unordered_set<std::shared_ptr<Queue>> TopicExchange::GetQueue(const std::string &pattern)
+    {
+        try
+        {
+            if (this->m_bindingTable.find(pattern) == this->m_bindingTable.end())
+                throw std::invalid_argument("No binding found for pattern: " + pattern);
+            ValidateRoutingPattern(pattern);
+            return this->m_bindingTable[pattern];   
+        }
+        catch (const std::invalid_argument &e)
+        {
+            throw std::invalid_argument("Invalid routing pattern: " + pattern + ". " + e.what());
         }
     }
 }

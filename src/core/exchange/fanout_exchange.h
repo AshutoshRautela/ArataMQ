@@ -17,6 +17,7 @@ namespace armq
         void BindQueue(std::shared_ptr<Queue> queue);
         void UnbindQueue(std::shared_ptr<Queue> queue);
         void RouteMessage(const Message &message);
+        
         inline size_t GetQueueCount() const { return m_queues.size(); }
     };
 }
